@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}About - DiabTrace Analytics{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2>About DiabTrace Analytics</h2>
+        <p style="color:#555; font-size:0.9rem; margin-bottom:20px;">
+            DiabTrace Analytics is a final year B.Tech project submitted to <strong>Sambalpur University Institute of Information Technology (SUIIT), Burla</strong>, Department of Computer Science and Engineering.
+        </p>
+
+        <table style="width:100%; border-collapse:collapse; font-size:0.9rem; margin-bottom:20px;">
+            <tr style="border-bottom:1px solid #eee;"><td style="padding:8px 12px; width:180px; color:#666; font-weight:bold;">Project Title</td><td style="padding:8px 12px;">DiabTrace Analytics: Fingerprint-Based Diabetes Prediction System</td></tr>
+            <tr style="border-bottom:1px solid #eee; background:#fafafa;"><td style="padding:8px 12px; color:#666; font-weight:bold;">Student</td><td style="padding:8px 12px;">Abhay Singh (Roll No: 23LBTICS01)</td></tr>
+            <tr style="border-bottom:1px solid #eee;"><td style="padding:8px 12px; color:#666; font-weight:bold;">Supervisor</td><td style="padding:8px 12px;">Mr. Preetam Patel, Dept. of CSE, SUIIT</td></tr>
+            <tr style="border-bottom:1px solid #eee; background:#fafafa;"><td style="padding:8px 12px; color:#666; font-weight:bold;">Institution</td><td style="padding:8px 12px;">SUIIT, Jyoti Vihar, Burla – 768019, Odisha</td></tr>
+            <tr style="border-bottom:1px solid #eee;"><td style="padding:8px 12px; color:#666; font-weight:bold;">Degree</td><td style="padding:8px 12px;">B.Tech in Computer Science and Engineering</td></tr>
+            <tr style="background:#fafafa;"><td style="padding:8px 12px; color:#666; font-weight:bold;">Year</td><td style="padding:8px 12px;">May 2026</td></tr>
+        </table>
+
+        <h3 style="margin-bottom:10px; font-size:1.1rem;">System Overview</h3>
+        <p style="font-size:0.88rem; color:#444; margin-bottom:15px; line-height:1.7;">
+            The system uses <strong>dermatoglyphic fingerprint patterns</strong> (Arch, Loop, Whorl), ridge count, and ridge density — extracted via OpenCV — as biometric features. These are fused with physiological health parameters (Age, BMI, Family History of Diabetes) and classified using a <strong>Random Forest Classifier</strong> trained on 3,000 records.
+        </p>
+
+        <h3 style="margin-bottom:10px; font-size:1.1rem;">Model Performance</h3>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px;">
+            <div style="text-align:center; padding:15px; background:#e3f2fd; border-radius:4px;">
+                <div style="font-size:1.6rem; font-weight:bold; color:#1565c0;">97.8%</div>
+                <div style="font-size:0.8rem; color:#666;">Test Accuracy</div>
+            </div>
+            <div style="text-align:center; padding:15px; background:#e8f5e9; border-radius:4px;">
+                <div style="font-size:1.6rem; font-weight:bold; color:#2e7d32;">98%</div>
+                <div style="font-size:0.8rem; color:#666;">Precision</div>
+            </div>
+            <div style="text-align:center; padding:15px; background:#fff3e0; border-radius:4px;">
+                <div style="font-size:1.6rem; font-weight:bold; color:#e65100;">97%</div>
+                <div style="font-size:0.8rem; color:#666;">Recall</div>
+            </div>
+            <div style="text-align:center; padding:15px; background:#f3e5f5; border-radius:4px;">
+                <div style="font-size:1.6rem; font-weight:bold; color:#6a1b9a;">98%</div>
+                <div style="font-size:0.8rem; color:#666;">F1-Score</div>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom:10px; font-size:1.1rem;">Tech Stack</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; font-size:0.85rem;">
+            {% for tech in ['Python 3.x', 'Flask', 'Scikit-learn', 'OpenCV', 'Pandas', 'NumPy', 'HTML5/CSS3'] %}
+            <span style="background:#1a1a2e; color:white; padding:4px 12px; border-radius:12px;">{{ tech }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>FAQ</h2>
+        <div style="margin-bottom:15px;">
+            <strong style="font-size:0.9rem; color:#1a1a2e;">How accurate is the prediction?</strong>
+            <p style="font-size:0.85rem; color:#555; margin-top:5px;">The model achieves 97.8% accuracy on the test set. However, this is a research prototype and not a clinical tool.</p>
+        </div>
+        <div style="margin-bottom:15px;">
+            <strong style="font-size:0.9rem; color:#1a1a2e;">What data is required?</strong>
+            <p style="font-size:0.85rem; color:#555; margin-top:5px;">A fingerprint image (.bmp/.png/.jpg), your Age, BMI, and Family History of Diabetes — no blood test needed.</p>
+        </div>
+        <div style="margin-bottom:15px;">
+            <strong style="font-size:0.9rem; color:#1a1a2e;">Can I use this for diagnosis?</strong>
+            <p style="font-size:0.85rem; color:#555; margin-top:5px;">No. This is a screening research tool only. Always consult a qualified medical professional for diagnosis.</p>
+        </div>
+        <div>
+            <strong style="font-size:0.9rem; color:#1a1a2e;">Is my data secure?</strong>
+            <p style="font-size:0.85rem; color:#555; margin-top:5px;">This is a local research prototype. Data is not stored permanently and resets on server restart.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

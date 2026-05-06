@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Step 1: Upload Fingerprint - DiabTrace{% endblock %}
+{% block extra_css %}
+<style>
+    #preview-box {
+        width: 220px;
+        height: 220px;
+        border: 2px dashed #999;
+        background: #f9f9f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 15px 0;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    #preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    #preview-box span { color: #aaa; font-size: 0.85rem; }
+    #scanning-overlay {
+        display: none;
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.6);
+        color: white;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        border-radius: 4px;
+    }
+    .result-box {
+        background: #e8f5e9;
+        border: 1px solid #a5d6a7;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    .result-box table { width: 100%; border-collapse: collapse; }
+    .result-box td { padding: 6px 10px; font-size: 0.9rem; }
+    .result-box td:first-child { font-weight: bold; color: #555; width: 160px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container" style="max-width:600px;">
+    <div class="card">
+        <h2>Step 1: Upload Fingerprint Image</h2>
+        <div style="background:#e3f2fd; border:1px solid #90caf9; padding:10px 15px; border-radius:4px; margin-bottom:18px; font-size:0.85rem; color:#1565c0;">
+            <strong>Note:</strong> Upload a fingerprint image (.bmp, .png, .jpg, etc.) to extract its type and ridge count. The system uses OpenCV to analyse the image.
+        </div>
+
+        <p style="font-size:0.9rem; color:#333; margin-bottom:12px;">
+            Hello, <strong>{{ user }}</strong>! Upload your fingerprint image below.
+        </p>
+
+        <form id="fp-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Upload Fingerprint Image (.bmp, .png, .jpg, etc.):</label>
+                <input type="file" name="fingerprint" id="fp-input" accept=".bmp,.png,.jpg,.jpeg,.tiff,.tif">
+            </div>
+
+            <div style="position:relative; display:inline-block;">
+                <div id="preview-box">
+                    <span>Image Preview Here</span>
+                </div>
+                <div id="scanning-overlay">
+                    &#128270; Scanning Fingerprint...
+                </div>
+            </div>
+
+            <br>
+            <button type="button" id="extract-btn" class="btn btn-primary" style="margin-top:10px;">Extract Features</button>
+        </form>
+
+        <div id="result-section" style="display:none;">
+            <div class="result-box">
+                <h3 style="margin-bottom:10px; font-size:1rem;">Extracted Fingerprint Data:</h3>
+                <table>
+                    <tr><td>Fingerprint Type:</td><td id="res-type">-</td></tr>
+                    <tr><td>Ridge Count:</td><td id="res-ridge">-</td></tr>
+                    <tr><td>Ridge Density:</td><td id="res-density">-</td></tr>
+                </table>
+            </div>
+            <a href="{{ url_for('prediction_form') }}" id="proceed-btn" class="btn btn-success" style="margin-top:12px; display:inline-block;">Proceed to Prediction &rarr;</a>
+        </div>
+
+        <div id="error-msg" style="display:none; color:#c62828; margin-top:10px; font-size:0.9rem;"></div>
+    </div>
+</div>
+
+<script>
+const fpInput = document.getElementById('fp-input');
+const previewBox = document.getElementById('preview-box');
+const scanOverlay = document.getElementById('scanning-overlay');
+const extractBtn = document.getElementById('extract-btn');
+const resultSection = document.getElementById('result-section');
+const errorMsg = document.getElementById('error-msg');
+
+fpInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        previewBox.innerHTML = '<img src="' + e.target.result + '" alt="Fingerprint Preview">';
+    };
+    reader.readAsDataURL(file);
+    resultSection.style.display = 'none';
+    errorMsg.style.display = 'none';
+});
+
+extractBtn.addEventListener('click', function() {
+    const file = fpInput.files[0];
+    if (!file) {
+        errorMsg.textContent = 'Please select a fingerprint image first.';
+        errorMsg.style.display = 'block';
+        return;
+    }
+
+    // Show scanning overlay
+    scanOverlay.style.display = 'flex';
+    extractBtn.textContent = 'Processing...';
+    extractBtn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('fingerprint', file);
+
+    fetch('{{ url_for("upload_fingerprint") }}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        scanOverlay.style.display = 'none';
+        extractBtn.textContent = 'Extract Features';
+        extractBtn.disabled = false;
+
+        if (data.success) {
+            document.getElementById('res-type').textContent = data.pattern_type;
+            document.getElementById('res-ridge').textContent = data.ridge_count;
+            document.getElementById('res-density').textContent = data.ridge_density;
+            resultSection.style.display = 'block';
+            errorMsg.style.display = 'none';
+        } else {
+            const msg = data.error || 'Feature extraction failed. Please upload a valid fingerprint image.';
+            errorMsg.innerHTML = '⚠️ ' + msg;
+            errorMsg.style.display = 'block';
+            resultSection.style.display = 'none';
+            // Reset preview
+            previewBox.innerHTML = '<span>Image Preview Here</span>';
+            fpInput.value = '';
+        }
+    })
+    .catch(err => {
+        scanOverlay.style.display = 'none';
+        extractBtn.textContent = 'Extract Features';
+        extractBtn.disabled = false;
+        errorMsg.textContent = 'Server error. Please try again.';
+        errorMsg.style.display = 'block';
+    });
+});
+</script>
+{% endblock %}

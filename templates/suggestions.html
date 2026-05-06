@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Health Suggestions - DiabTrace{% endblock %}
+{% block content %}
+<div class="container" style="max-width:800px;">
+    <div class="card">
+        <h2>Personalized Suggestions for Diabetes Risk</h2>
+        {% set risk_upper = risk | upper %}
+        <div style="background:{% if risk_upper=='LOW' %}#c8e6c9{% elif risk_upper=='MEDIUM' %}#fff9c4{% else %}#ffcdd2{% endif %}; padding:12px 18px; border-radius:4px; margin-bottom:20px;">
+            <strong>Your Predicted Diabetes Risk: {{ risk_upper }}</strong>
+        </div>
+
+        <h3 style="margin-bottom:10px;">General Health Recommendations</h3>
+        <p style="color:#555; font-size:0.9rem; margin-bottom:20px;">Regardless of your risk level, maintaining a healthy lifestyle is crucial for preventing and managing diabetes. Here are some general guidelines:</p>
+
+        <h4 style="color:#1a1a2e; margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:5px;">Dietary Guidelines</h4>
+        <ul style="margin-left:20px; font-size:0.88rem; color:#444; line-height:2;">
+            <li><strong>Balanced Meals:</strong> Focus on whole foods — vegetables, fruits, lean proteins, whole grains.</li>
+            <li><strong>Limit Sugars:</strong> Reduce sugary drinks, processed foods, refined carbohydrates.</li>
+            <li><strong>Healthy Fats:</strong> Choose avocados, nuts, seeds, olive oil.</li>
+            <li><strong>Portion Control:</strong> Be mindful of portion sizes to manage calorie intake.</li>
+            <li><strong>Hydration:</strong> Drink plenty of water throughout the day.</li>
+        </ul>
+
+        <h4 style="color:#1a1a2e; margin:15px 0 8px; border-bottom:1px solid #eee; padding-bottom:5px;">Lifestyle Adjustments</h4>
+        <ul style="margin-left:20px; font-size:0.88rem; color:#444; line-height:2;">
+            <li><strong>Stress Management:</strong> Practice meditation, yoga, or deep breathing.</li>
+            <li><strong>Quit Smoking:</strong> If you smoke, quitting is one of the most impactful changes.</li>
+            <li><strong>Limit Alcohol:</strong> Consume alcohol in moderation, if at all.</li>
+            <li><strong>Regular Check-ups:</strong> Schedule regular health check-ups with your doctor.</li>
+        </ul>
+
+        <h4 style="color:#1a1a2e; margin:15px 0 8px; border-bottom:1px solid #eee; padding-bottom:5px;">Exercise Recommendations</h4>
+        <ul style="margin-left:20px; font-size:0.88rem; color:#444; line-height:2;">
+            <li><strong>Aerobic Activity:</strong> At least 150 minutes of moderate-intensity exercise per week (brisk walking, cycling, swimming).</li>
+            <li><strong>Strength Training:</strong> Incorporate strength exercises at least twice a week.</li>
+            <li><strong>Stay Active:</strong> Reduce sedentary time with short walks or stretching breaks.</li>
+        </ul>
+
+        <h4 style="color:#1a1a2e; margin:15px 0 8px; border-bottom:1px solid #eee; padding-bottom:5px;">Sleep Hygiene</h4>
+        <ul style="margin-left:20px; font-size:0.88rem; color:#444; line-height:2;">
+            <li><strong>Consistent Schedule:</strong> Go to bed and wake up at the same time daily.</li>
+            <li><strong>Adequate Sleep:</strong> Aim for 7–9 hours of quality sleep per night.</li>
+            <li><strong>Limit Screens:</strong> Avoid screens at least an hour before bedtime.</li>
+        </ul>
+
+        <h4 style="color:#1a1a2e; margin:15px 0 8px; border-bottom:1px solid #eee; padding-bottom:5px;">Medical Considerations</h4>
+        <ul style="margin-left:20px; font-size:0.88rem; color:#444; line-height:2;">
+            <li><strong>Consult Your Doctor:</strong> Always discuss your risk assessment with a qualified medical professional.</li>
+            <li><strong>Regular Monitoring:</strong> Your doctor may recommend A1C, fasting blood glucose tests.</li>
+            <li><strong>Medication:</strong> Follow your doctor's advice regarding any prescribed medications.</li>
+        </ul>
+
+        {% if risk_upper == 'LOW' %}
+        <div style="background:#e8f5e9; border-left:4px solid #4caf50; padding:12px 16px; margin-top:15px; font-size:0.88rem; color:#2e7d32;">
+            <strong>Low Risk Specific:</strong> Continue with healthy habits and regular check-ups to maintain your low risk status.
+        </div>
+        {% elif risk_upper == 'MEDIUM' %}
+        <div style="background:#fff8e1; border-left:4px solid #ffc107; padding:12px 16px; margin-top:15px; font-size:0.88rem; color:#e65100;">
+            <strong>Medium Risk Specific:</strong> Moderate risk detected. Schedule a consultation with your doctor soon. Consider HbA1c testing.
+        </div>
+        {% else %}
+        <div style="background:#ffebee; border-left:4px solid #f44336; padding:12px 16px; margin-top:15px; font-size:0.88rem; color:#b71c1c;">
+            <strong>High Risk Specific:</strong> High risk detected. Please consult a qualified doctor promptly for clinical evaluation (HbA1c, fasting blood glucose, OGTT).
+        </div>
+        {% endif %}
+
+        <p style="font-size:0.75rem; color:#999; margin-top:20px; font-style:italic;">
+            Disclaimer: These suggestions are for informational purposes only and do not constitute medical advice. Always consult a qualified healthcare provider.
+        </p>
+
+        <div style="margin-top:15px;">
+            <a href="{{ url_for('upload_fingerprint') }}" class="btn btn-primary">Perform Another Prediction</a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary" style="margin-left:10px;">Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

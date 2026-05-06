@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DiabTrace Analytics{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; color: #333; }
+
+        nav {
+            background: #1a1a2e;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav .brand { color: #e0e0e0; font-size: 1.2rem; font-weight: bold; text-decoration: none; }
+        nav ul { list-style: none; display: flex; gap: 20px; }
+        nav ul li a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 5px 10px;
+        }
+        nav ul li a:hover { color: #fff; }
+        nav ul li a.active { color: #fff; border-bottom: 2px solid #4fc3f7; }
+        .logout-btn {
+            background: #e53935;
+            color: white !important;
+            padding: 5px 14px !important;
+            border-radius: 4px;
+        }
+
+        .flash-msgs { padding: 10px 30px; }
+        .flash-msgs .msg {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .msg.success { background: #c8e6c9; color: #2e7d32; border-left: 4px solid #4caf50; }
+        .msg.error { background: #ffcdd2; color: #c62828; border-left: 4px solid #f44336; }
+
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .card h2 { color: #1a1a2e; margin-bottom: 15px; font-size: 1.3rem; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; color: #555; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1a1a2e;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 9px 22px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+        .btn-primary { background: #1a1a2e; color: white; }
+        .btn-primary:hover { background: #2d2d4e; }
+        .btn-success { background: #2e7d32; color: white; }
+        .btn-success:hover { background: #1b5e20; }
+        .btn-secondary { background: #546e7a; color: white; }
+        .btn-secondary:hover { background: #37474f; }
+        .btn-danger { background: #c62828; color: white; }
+
+        footer {
+            background: #1a1a2e;
+            color: #aaa;
+            text-align: center;
+            padding: 18px;
+            margin-top: 40px;
+            font-size: 0.85rem;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<nav>
+    <a class="brand" href="{{ url_for('index') }}">DiabTrace Analytics</a>
+    <ul>
+        <li><a href="{{ url_for('index') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        {% if user %}
+        <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('upload_fingerprint') }}">Predict Risk</a></li>
+        <li><a href="{{ url_for('logout') }}" class="logout-btn">Logout</a></li>
+        {% else %}
+        <li><a href="{{ url_for('register') }}">Register</a></li>
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-msgs">
+{% for category, message in messages %}
+<div class="msg {{ category }}">{{ message }}</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer>
+    DiabTrace Analytics &mdash; B.Tech Final Year Project &mdash; CSE, SUIIT Burla, Odisha &mdash; 2026
+</footer>
+</body>
+</html>

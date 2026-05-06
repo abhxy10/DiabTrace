@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - DiabTrace{% endblock %}
+{% block content %}
+<div class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2 style="font-size:1.3rem;">Dashboard — Hello, {{ user }}!</h2>
+        <a href="{{ url_for('upload_fingerprint') }}" class="btn btn-primary">+ New Prediction</a>
+    </div>
+
+    {% if predictions %}
+    <div class="card" style="padding:0; overflow:hidden;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+            <thead>
+                <tr style="background:#1a1a2e; color:white;">
+                    <th style="padding:10px 14px; text-align:left;">#</th>
+                    <th style="padding:10px 14px; text-align:left;">FP Type</th>
+                    <th style="padding:10px 14px; text-align:left;">Ridge Count</th>
+                    <th style="padding:10px 14px; text-align:left;">Age</th>
+                    <th style="padding:10px 14px; text-align:left;">BMI</th>
+                    <th style="padding:10px 14px; text-align:left;">Family Hx</th>
+                    <th style="padding:10px 14px; text-align:left;">Risk</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in predictions | reverse %}
+            <tr style="border-bottom:1px solid #eee; {% if loop.index is odd %}background:#fafafa;{% endif %}">
+                <td style="padding:9px 14px;">{{ loop.index }}</td>
+                <td style="padding:9px 14px;">{{ p.fp_type }}</td>
+                <td style="padding:9px 14px;">{{ p.ridge_count }}</td>
+                <td style="padding:9px 14px;">{{ p.age }}</td>
+                <td style="padding:9px 14px;">{{ p.bmi }}</td>
+                <td style="padding:9px 14px;">{{ p.family_history }}</td>
+                <td style="padding:9px 14px;">
+                    {% if p.risk == 'low' %}
+                    <span style="background:#c8e6c9;color:#1b5e20;padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">LOW</span>
+                    {% elif p.risk == 'medium' %}
+                    <span style="background:#fff9c4;color:#f57f17;padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">MEDIUM</span>
+                    {% else %}
+                    <span style="background:#ffcdd2;color:#b71c1c;padding:3px 10px;border-radius:10px;font-size:0.8rem;font-weight:bold;">HIGH</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:15px; margin-top:15px;">
+        {% set low_count = predictions | selectattr('risk', 'equalto', 'low') | list | length %}
+        {% set med_count = predictions | selectattr('risk', 'equalto', 'medium') | list | length %}
+        {% set high_count = predictions | selectattr('risk', 'equalto', 'high') | list | length %}
+        <div class="card" style="text-align:center; background:#c8e6c9; border-color:#a5d6a7;">
+            <div style="font-size:2rem; font-weight:bold; color:#1b5e20;">{{ low_count }}</div>
+            <div style="color:#2e7d32; font-size:0.85rem;">Low Risk Results</div>
+        </div>
+        <div class="card" style="text-align:center; background:#fff9c4; border-color:#ffe082;">
+            <div style="font-size:2rem; font-weight:bold; color:#f57f17;">{{ med_count }}</div>
+            <div style="color:#e65100; font-size:0.85rem;">Medium Risk Results</div>
+        </div>
+        <div class="card" style="text-align:center; background:#ffcdd2; border-color:#ef9a9a;">
+            <div style="font-size:2rem; font-weight:bold; color:#b71c1c;">{{ high_count }}</div>
+            <div style="color:#c62828; font-size:0.85rem;">High Risk Results</div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card" style="text-align:center; padding:50px;">
+        <p style="color:#666; margin-bottom:15px;">No predictions yet. Upload a fingerprint to get started.</p>
+        <a href="{{ url_for('upload_fingerprint') }}" class="btn btn-primary">Start First Prediction</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

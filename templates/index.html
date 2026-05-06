@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Home - DiabTrace Analytics{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- 🔷 HERO SECTION WITH RIGHT LOGO -->
+    <div style="background: #1a1a2e; color: white; padding: 40px 30px; border-radius: 6px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+
+        <!-- LEFT CONTENT -->
+        <div style="max-width: 600px;">
+            <h1 style="font-size: 2rem; margin-bottom: 12px; line-height: 1.3;">
+                DiabTrace Analytics:<br>Fingerprint-Based Diabetes Prediction
+            </h1>
+
+            <p style="color: #ccc; margin-bottom: 25px; font-size: 0.95rem;">
+                A non-invasive AI system that predicts diabetes risk using fingerprint biometrics (pattern type, ridge count, ridge density) combined with basic health parameters — no blood test required.
+            </p>
+
+            {% if user %}
+            <a href="{{ url_for('upload_fingerprint') }}" class="btn btn-primary" style="background:#4fc3f7; color:#1a1a2e; font-weight:bold; margin-right:10px;">Start Prediction</a>
+            {% else %}
+            <a href="{{ url_for('register') }}" class="btn" style="background:#4fc3f7; color:#1a1a2e; font-weight:bold; margin-right:10px;">Get Started</a>
+            <a href="{{ url_for('about') }}" class="btn" style="background:transparent; color:white; border:1px solid #ccc;">Learn More</a>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT LOGO -->
+        <div style="margin-top: 20px;">
+            <img src="{{ url_for('static', filename='logo.png') }}" 
+                 alt="University Logo"
+                 style="width:130px; height:auto; border-radius:50%; background:white; padding:6px; box-shadow: 0 0 15px rgba(255,255,255,0.1);">
+        </div>
+    </div>
+
+
+    <!-- 🔷 FEATURES -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+        
+        <div class="card" style="text-align:center;">
+            <div style="font-size:2rem; margin-bottom:8px;">🖐</div>
+            <h3 style="margin-bottom:6px; font-size:1rem;">Fingerprint Analysis</h3>
+            <p style="color:#666; font-size:0.85rem;">
+                Extracts Arch/Loop/Whorl pattern type, ridge count, ridge density using OpenCV
+            </p>
+        </div>
+
+        <div class="card" style="text-align:center;">
+            <div style="font-size:2rem; margin-bottom:8px;">🌲</div>
+            <h3 style="margin-bottom:6px; font-size:1rem;">Random Forest Model</h3>
+            <p style="color:#666; font-size:0.85rem;">
+                200-tree ensemble trained on 3000 records, 97.8% accuracy on test set
+            </p>
+        </div>
+
+        <div class="card" style="text-align:center;">
+            <div style="font-size:2rem; margin-bottom:8px;">📊</div>
+            <h3 style="margin-bottom:6px; font-size:1rem;">3-Class Risk Output</h3>
+            <p style="color:#666; font-size:0.85rem;">
+                Classifies risk as Low / Medium / High with prediction probabilities
+            </p>
+        </div>
+    </div>
+
+
+    <!-- 🔷 HOW IT WORKS -->
+    <div class="card">
+        <h2>How It Works</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align:center;">
+            
+            <div style="padding:15px; background:#f9f9f9; border-radius:4px;">
+                <div style="font-size:1.5rem; margin-bottom:8px;">1️⃣</div>
+                <strong style="font-size:0.85rem;">Register & Login</strong>
+                <p style="font-size:0.8rem; color:#666; margin-top:5px;">
+                    Create account, log in to proceed
+                </p>
+            </div>
+
+            <div style="padding:15px; background:#f9f9f9; border-radius:4px;">
+                <div style="font-size:1.5rem; margin-bottom:8px;">2️⃣</div>
+                <strong style="font-size:0.85rem;">Upload Fingerprint</strong>
+                <p style="font-size:0.8rem; color:#666; margin-top:5px;">
+                    Upload .bmp/.png/.jpg image
+                </p>
+            </div>
+
+            <div style="padding:15px; background:#f9f9f9; border-radius:4px;">
+                <div style="font-size:1.5rem; margin-bottom:8px;">3️⃣</div>
+                <strong style="font-size:0.85rem;">Enter Health Data</strong>
+                <p style="font-size:0.8rem; color:#666; margin-top:5px;">
+                    Age, BMI, Family History
+                </p>
+            </div>
+
+            <div style="padding:15px; background:#f9f9f9; border-radius:4px;">
+                <div style="font-size:1.5rem; margin-bottom:8px;">4️⃣</div>
+                <strong style="font-size:0.85rem;">Get Risk Result</strong>
+                <p style="font-size:0.8rem; color:#666; margin-top:5px;">
+                    View risk level + recommendations
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 🔷 DISCLAIMER -->
+    <div class="card" style="background:#fff3e0; border-color:#ff9800;">
+        <p style="font-size:0.85rem; color:#e65100;">
+            <strong>Disclaimer:</strong> This tool is intended for educational and research purposes only. 
+            It does not provide medical advice or diagnosis. Please consult a qualified healthcare professional.
+        </p>
+    </div>
+
+</div>
+{% endblock %}

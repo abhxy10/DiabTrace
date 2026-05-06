@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Prediction Result - DiabTrace{% endblock %}
+{% block extra_css %}
+<style>
+.risk-badge {
+    display: inline-block;
+    padding: 10px 28px;
+    border-radius: 4px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: 15px 0;
+}
+.risk-LOW { background: #c8e6c9; color: #1b5e20; border: 2px solid #4caf50; }
+.risk-MEDIUM { background: #fff9c4; color: #f57f17; border: 2px solid #ffc107; }
+.risk-HIGH { background: #ffcdd2; color: #b71c1c; border: 2px solid #f44336; }
+
+.detail-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.detail-table td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+.detail-table td:first-child { font-weight: bold; color: #555; width: 200px; }
+
+.proba-bar { height: 22px; border-radius: 3px; margin: 3px 0; display: flex; align-items: center; padding: 0 8px; font-size: 0.8rem; color: white; font-weight: bold; }
+.bar-low { background: #4caf50; }
+.bar-medium { background: #ff9800; }
+.bar-high { background: #f44336; }
+
+.fi-bar { height: 18px; background: #1a1a2e; border-radius: 3px; display: inline-block; vertical-align: middle; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="card" style="text-align:center;">
+        <h2>Prediction Result</h2>
+
+        {% set risk_upper = record.risk | upper %}
+        <div class="risk-badge risk-{{ risk_upper }}">
+            Diabetes Risk: {{ risk_upper }}
+        </div>
+
+        <p style="color:#666; font-size:0.85rem; margin-bottom:0;">
+            {% if risk_upper == 'LOW' %}Low risk detected. Maintain healthy lifestyle and regular check-ups.
+            {% elif risk_upper == 'MEDIUM' %}Moderate risk. Consider consulting a doctor for further evaluation.
+            {% else %}High risk detected. Please consult a qualified medical professional promptly.{% endif %}
+        </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+        <div class="card">
+            <h2>Input Summary</h2>
+            <table class="detail-table">
+                <tr><td>Fingerprint Type</td><td>{{ record.fp_type }}</td></tr>
+                <tr><td>Ridge Count</td><td>{{ record.ridge_count }}</td></tr>
+                <tr><td>Ridge Density</td><td>{{ record.ridge_density }}</td></tr>
+                <tr><td>Age</td><td>{{ record.age }}</td></tr>
+                <tr><td>BMI</td><td>{{ record.bmi }}</td></tr>
+                <tr><td>Family History</td><td>{{ record.family_history }}</td></tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Prediction Probabilities</h2>
+            <p style="font-size:0.8rem; color:#666; margin-bottom:12px;">Model confidence per risk class:</p>
+            {% for cls, pct in proba.items() %}
+            <div style="margin-bottom:10px;">
+                <div style="font-size:0.8rem; margin-bottom:3px; font-weight:bold;">{{ cls | upper }} — {{ pct }}%</div>
+                <div style="background:#eee; border-radius:3px; height:22px;">
+                    <div class="proba-bar bar-{{ cls }}" style="width:{{ pct }}%;">{{ pct }}%</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Feature Importance (Random Forest)</h2>
+        <p style="font-size:0.8rem; color:#666; margin-bottom:16px;">Relative contribution of each feature to the model's prediction:</p>
+        {% for feat, imp in feature_importance.items() | sort(attribute=1, reverse=True) %}
+        {% set pct = (imp * 100) | round(1) %}
+        {% set bar_width = (imp * 100) | round(0) | int %}
+        <div style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="font-size:0.85rem; font-weight:600; color:#333;">{{ feat }}</span>
+                <span style="font-size:0.82rem; font-weight:bold; color:#555;">{{ "%.1f" | format(imp * 100) }}%</span>
+            </div>
+            <div style="background:#e0e0e0; border-radius:6px; height:20px; overflow:hidden;">
+                <div style="width:{{ bar_width }}%; height:100%; border-radius:6px;
+                    background: {% if bar_width >= 30 %}#1a237e{% elif bar_width >= 20 %}#283593{% elif bar_width >= 15 %}#303f9f{% elif bar_width >= 10 %}#3949ab{% else %}#5c6bc0{% endif %};
+                    transition: width 0.8s ease;"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:5px;">
+        <a href="{{ url_for('upload_fingerprint') }}" class="btn btn-primary">Perform Another Prediction</a>
+        <a href="{{ url_for('remidy', diabetes_risk=record.risk) }}" class="btn btn-success">View Suggestions</a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Go to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
